@@ -1,0 +1,126 @@
+{
+  "entities": {
+    "GameState": {
+      "title": "GameState",
+      "description": "Authoritative real-time game status, round schedule clock, reveal sequence, payout odds, and admin forced result overrides for Lottery 12",
+      "type": "object",
+      "properties": {
+        "roundId": { "type": "string", "maxLength": 64 },
+        "roundIndex": { "type": "number" },
+        "roundTime": { "type": "string", "maxLength": 32 },
+        "roundDuration": { "type": "number" },
+        "roundEndTime": { "type": "number" },
+        "countdown": { "type": "number" },
+        "isRevealing": { "type": "boolean" },
+        "revealStep": { "type": "number" },
+        "revealStartTime": { "type": "number" },
+        "forcedWinningNumber": { "type": "number" },
+        "autoDrawEnabled": { "type": "boolean" },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["roundId", "roundIndex"]
+    },
+    "DrawResult": {
+      "title": "DrawResult",
+      "description": "Historical draw result record for past lottery rounds including date (year, month, day) and time",
+      "type": "object",
+      "properties": {
+        "roundId": { "type": "string", "maxLength": 64 },
+        "roundIndex": { "type": "number" },
+        "date": { "type": "string", "maxLength": 32 },
+        "year": { "type": "number" },
+        "month": { "type": "number" },
+        "day": { "type": "number" },
+        "time": { "type": "string", "maxLength": 32 },
+        "number": { "type": "number" },
+        "animal": { "type": "string", "maxLength": 32 },
+        "color": { "type": "string", "maxLength": 16 },
+        "size": { "type": "string", "maxLength": 16 },
+        "parity": { "type": "string", "maxLength": 16 },
+        "timestamp": { "type": "number" },
+        "savedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["roundId", "roundIndex", "number", "animal", "color", "size", "parity"]
+    },
+    "User": {
+      "title": "User",
+      "description": "User profile with balance, account role, and identification",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "balance": { "type": "number" },
+        "role": { "type": "string", "enum": ["admin", "player"] },
+        "updatedAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["uid", "email", "balance", "role"]
+    },
+    "BetRecord": {
+      "title": "BetRecord",
+      "description": "Actual player betting slip starting at ID 0001 with full date (year, month, day) and time metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "ticketId": { "type": "string", "maxLength": 32 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "roundId": { "type": "string", "maxLength": 64 },
+        "date": { "type": "string", "maxLength": 32 },
+        "year": { "type": "number" },
+        "month": { "type": "number" },
+        "day": { "type": "number" },
+        "time": { "type": "string", "maxLength": 32 },
+        "timestamp": { "type": "number" },
+        "isRealBet": { "type": "boolean" },
+        "totalStake": { "type": "number" },
+        "totalPotentialPayout": { "type": "number" },
+        "totalPayout": { "type": "number" },
+        "netProfit": { "type": "number" },
+        "resultNumber": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "won", "lost"] },
+        "createdAt": { "type": "string", "maxLength": 64 }
+      },
+      "required": ["id", "ticketId", "roundId", "date", "year", "month", "day", "time", "totalStake", "status"]
+    },
+    "TransactionRecord": {
+      "title": "TransactionRecord",
+      "description": "Player wallet deposit or withdrawal transaction record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "userName": { "type": "string", "maxLength": 128 },
+        "userPhone": { "type": "string", "maxLength": 64 },
+        "type": { "type": "string", "enum": ["deposit", "withdrawal", "adjustment"] },
+        "amount": { "type": "number" },
+        "method": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "timestamp": { "type": "number" },
+        "timeString": { "type": "string", "maxLength": 32 },
+        "note": { "type": "string", "maxLength": 256 }
+      },
+      "required": ["id", "userName", "type", "amount", "method", "status"]
+    }
+  },
+  "firestore": {
+    "/game_state/{stateId}": {
+      "schema": "GameState",
+      "description": "Global authoritative game state document for synchronizing all client devices"
+    },
+    "/draw_history/{roundId}": {
+      "schema": "DrawResult",
+      "description": "Historical lottery results collection synchronized across all client and admin devices"
+    },
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User account documents containing persistent balance and authentication role"
+    },
+    "/bets/{betId}": {
+      "schema": "BetRecord",
+      "description": "Actual player betting records collection starting at ID 0001 with year/month/day metadata"
+    },
+    "/transactions/{txId}": {
+      "schema": "TransactionRecord",
+      "description": "Deposit and withdrawal transaction records synchronized between players and admins"
+    }
+  }
+}

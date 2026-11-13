@@ -1,0 +1,8 @@
+{
+  "name": "ឆ្នោត 12 ",
+  "description": "វេទិកាឆ្នោតខ្មែរ សត្វ 12",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
