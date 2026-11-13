@@ -629,20 +629,11 @@ export default function App() {
     });
 
     // 3. Authoritative Firestore Bets Listener (onSnapshot) — Actual Wagers Only
-    const unsubFirestoreBets = subscribeToBets((firestoreBets) => {
-      if (firestoreBets && firestoreBets.length > 0) {
-        setRecentBetRecords((prev) => {
-          const map = new Map<string, BetHistoryRecord>();
-          firestoreBets.forEach((b) => {
-            if (b.id) map.set(b.id, b);
-          });
-          prev.forEach((b) => {
-            if (!map.has(b.id)) map.set(b.id, b);
-          });
-          return normalizeRealBetRecords(Array.from(map.values()));
-        });
-      }
-    });
+   
+const unsubFirestoreBets = subscribeToBets((firestoreBets) => {
+  setRecentBetRecords(normalizeRealBetRecords(firestoreBets ?? []));
+});
+
 
     // 4. Authoritative Firestore Transactions Listener (onSnapshot)
     const unsubFirestoreTransactions = subscribeToTransactions((firestoreTxs) => {
